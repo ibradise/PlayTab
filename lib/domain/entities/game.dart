@@ -1,4 +1,6 @@
-class Game {
+import 'package:equatable/equatable.dart';
+
+class Game extends Equatable {
   const Game({
     required this.id,
     required this.stationId,
@@ -14,6 +16,10 @@ class Game {
   final int loserTabId;
   final int playedAt;
   final int price;
+
+  @override
+  List<Object?> get props =>
+      [id, stationId, winnerTabId, loserTabId, playedAt, price];
 
   Map<String, Object?> toMap() => {
         'id': id,

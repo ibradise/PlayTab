@@ -9,11 +9,13 @@ class StationCard extends StatelessWidget {
     required this.data,
     required this.onSlotTap,
     required this.onSlotLongPress,
+    required this.onLost,
   });
 
   final StationWithTabs data;
   final void Function(Slot slot) onSlotTap;
   final void Function(Slot slot) onSlotLongPress;
+  final void Function(int loserTabId) onLost;
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +42,27 @@ class StationCard extends StatelessWidget {
               ),
             ),
             _slot(context, Slot.b),
+            if (data.station.isFull) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(child: _lostButton(context, Slot.a)),
+                  const SizedBox(width: 12),
+                  Expanded(child: _lostButton(context, Slot.b)),
+                ],
+              ),
+            ],
           ],
         ),
       ),
+    );
+  }
+
+  Widget _lostButton(BuildContext context, Slot slot) {
+    final tab = data.tabInSlot(slot)!;
+    return OutlinedButton(
+      onPressed: () => onLost(tab.id),
+      child: Text('${tab.displayLabel} lost'),
     );
   }
 

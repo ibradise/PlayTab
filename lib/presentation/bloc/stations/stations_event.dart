@@ -35,3 +35,21 @@ class SlotClearedEvent extends StationsEvent {
   @override
   List<Object?> get props => [stationId, slot];
 }
+
+class LossRecorded extends StationsEvent {
+  const LossRecorded({required this.stationId, required this.loserTabId});
+
+  final int stationId;
+  final int loserTabId;
+
+  @override
+  List<Object?> get props => [stationId, loserTabId];
+}
+
+class UndoRequested extends StationsEvent {
+  const UndoRequested();
+}
+
+class OutcomeConsumed extends StationsEvent {
+  const OutcomeConsumed();
+}

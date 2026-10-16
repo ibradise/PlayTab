@@ -19,6 +19,8 @@ import '../domain/usecases/get_available_tabs.dart';
 import '../domain/usecases/get_open_tabs.dart';
 import '../domain/usecases/get_stations_with_tabs.dart';
 import '../domain/usecases/get_tab_owed.dart';
+import '../domain/usecases/record_game_result.dart';
+import '../domain/usecases/undo_last_game.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -43,4 +45,7 @@ Future<void> setupDependencies({Database? database}) async {
   sl.registerLazySingleton<CreateTab>(() => CreateTab(sl()));
   sl.registerLazySingleton<AssignTabToSlot>(() => AssignTabToSlot(sl()));
   sl.registerLazySingleton<ClearSlot>(() => ClearSlot(sl()));
+  sl.registerLazySingleton<RecordGameResult>(
+      () => RecordGameResult(sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton<UndoLastGame>(() => UndoLastGame(sl(), sl()));
 }

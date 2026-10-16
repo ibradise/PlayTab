@@ -11,18 +11,6 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 
 ---
 
-## Task 4 — Record game result (core loop)
-
-- [ ] Usecase `RecordGameResult`: require both slots filled; create `Game` (winner, loser, station, time, `price` snapshot); free the loser slot; if exactly one tab is waiting, auto-place it, else signal "needs pick".
-- [ ] `presentation/bloc/stations/`: `recordLoss` event + auto-fill/pick flow.
-- [ ] `StationCard`: wire `[#x lost]` buttons.
-- [ ] Temporary Undo action after recording (snackbar) → deletes last game, restores slot.
-- [ ] Tests: one game created, owed increases by price, auto-fill path.
-
-**Done when:** tapping lost records exactly one game and follows the auto-fill/pick flow; analyze/test pass.
-
----
-
 ## Task 5 — Mark paid & close tab
 
 - [ ] Usecase `MarkPaid`: record `Payment` (full owed), then close or keep open; remove from station if closed.
