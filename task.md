@@ -11,16 +11,6 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 
 ---
 
-## Task 6 — Tab detail: stats & head-to-head
-
-- [ ] Usecases: `GetTabStats` (played/won/lost), `GetHeadToHead`.
-- [ ] `presentation/bloc/tab_detail/`: `TabDetailBloc` (load tab + stats + h2h).
-- [ ] `TabDetailPage`: stats section and head-to-head list.
-
-**Done when:** correct played/won/lost and h2h shown; analyze/test pass.
-
----
-
 ## Task 7 — Game history & per-game undo
 
 - [ ] Usecases: `GetGameHistory`, `UndoGame` (delete game, recompute owed, restore slot when it's the station's latest; block on conflict).

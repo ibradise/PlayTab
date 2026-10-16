@@ -53,4 +53,13 @@ class SqfliteGameRepository implements GameRepository {
     );
     return rows.map((r) => r['price'] as int).toList();
   }
+
+  @override
+  Future<int> wonCountFor(int tabId) async {
+    final rows = await _db.rawQuery(
+      'SELECT COUNT(*) AS c FROM games WHERE winner_tab_id = ?',
+      [tabId],
+    );
+    return Sqflite.firstIntValue(rows) ?? 0;
+  }
 }

@@ -10,4 +10,5 @@ abstract interface class GameRepository {
   Future<List<Game>> getAll();
   Future<void> delete(int id);
   Future<List<int>> lostPricesFor(int tabId);
+  Future<int> wonCountFor(int tabId);
 }

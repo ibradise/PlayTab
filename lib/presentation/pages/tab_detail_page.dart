@@ -37,7 +37,7 @@ class _TabDetailView extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: const Text('Mark paid'),
         content: Text(
-          '${detail.losses} losses × ${formatBirr(detail.pricePerGame)}'
+          '${detail.stats.lost} losses × ${formatBirr(detail.pricePerGame)}'
           ' = ${formatBirr(detail.owed)}',
         ),
         actions: [
@@ -146,9 +146,37 @@ class _TabDetailView extends StatelessWidget {
                 onPressed: () => _editLabel(context, detail),
                 child: const Text('Edit label'),
               ),
+              const SizedBox(height: 24),
+              Text('Stats', style: theme.textTheme.titleMedium),
+              const SizedBox(height: 8),
+              _statRow('Played', detail.stats.played),
+              _statRow('Won', detail.stats.won),
+              _statRow('Lost', detail.stats.lost),
+              if (detail.headToHead.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                Text('Head-to-head', style: theme.textTheme.titleMedium),
+                const SizedBox(height: 8),
+                for (final h in detail.headToHead)
+                  ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(h.other.displayLabel),
+                    trailing: Text('${h.wonAgainst} - ${h.lostAgainst}'),
+                  ),
+              ],
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _statRow(String label, int value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [Text(label), Text('$value')],
       ),
     );
   }

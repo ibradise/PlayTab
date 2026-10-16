@@ -17,10 +17,12 @@ import '../domain/usecases/clear_slot.dart';
 import '../domain/usecases/close_tab.dart';
 import '../domain/usecases/create_tab.dart';
 import '../domain/usecases/get_available_tabs.dart';
+import '../domain/usecases/get_head_to_head.dart';
 import '../domain/usecases/get_open_tabs.dart';
 import '../domain/usecases/get_stations_with_tabs.dart';
 import '../domain/usecases/get_tab_detail.dart';
 import '../domain/usecases/get_tab_owed.dart';
+import '../domain/usecases/get_tab_stats.dart';
 import '../domain/usecases/mark_paid.dart';
 import '../domain/usecases/record_game_result.dart';
 import '../domain/usecases/undo_last_game.dart';
@@ -41,6 +43,8 @@ Future<void> setupDependencies({Database? database}) async {
       () => SqfliteSettingsRepository(sl()));
 
   sl.registerLazySingleton<GetTabOwed>(() => GetTabOwed(sl(), sl()));
+  sl.registerLazySingleton<GetTabStats>(() => GetTabStats(sl()));
+  sl.registerLazySingleton<GetHeadToHead>(() => GetHeadToHead(sl(), sl()));
   sl.registerLazySingleton<GetOpenTabs>(() => GetOpenTabs(sl(), sl()));
   sl.registerLazySingleton<GetStationsWithTabs>(
       () => GetStationsWithTabs(sl(), sl()));
@@ -52,7 +56,7 @@ Future<void> setupDependencies({Database? database}) async {
       () => RecordGameResult(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton<UndoLastGame>(() => UndoLastGame(sl(), sl()));
   sl.registerLazySingleton<GetTabDetail>(
-      () => GetTabDetail(sl(), sl(), sl(), sl()));
+      () => GetTabDetail(sl(), sl(), sl(), sl(), sl()));
   sl.registerLazySingleton<MarkPaid>(() => MarkPaid(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton<CloseTab>(() => CloseTab(sl(), sl()));
 }
