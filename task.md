@@ -11,16 +11,6 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 
 ---
 
-## Task 8 — Settings
-
-- [ ] Usecases: `UpdatePricePerGame`, `AddStation`, `RenameStation`, `RemoveStation`.
-- [ ] `presentation/pages/settings_page.dart` + `bloc/settings/`.
-- [ ] Price field; station add/rename/remove. New station appears on main screen.
-
-**Done when:** price and stations manageable; adding a station needs no code change; analyze/test pass.
-
----
-
 ## Task 9 — Edge cases, polish & acceptance pass
 
 - [ ] Single-station rule: move-with-confirmation when placing on a second station.

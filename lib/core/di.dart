@@ -12,6 +12,7 @@ import '../domain/repositories/payment_repository.dart';
 import '../domain/repositories/settings_repository.dart';
 import '../domain/repositories/station_repository.dart';
 import '../domain/repositories/tab_repository.dart';
+import '../domain/usecases/add_station.dart';
 import '../domain/usecases/assign_tab_to_slot.dart';
 import '../domain/usecases/clear_slot.dart';
 import '../domain/usecases/close_tab.dart';
@@ -26,8 +27,11 @@ import '../domain/usecases/get_tab_owed.dart';
 import '../domain/usecases/get_tab_stats.dart';
 import '../domain/usecases/mark_paid.dart';
 import '../domain/usecases/record_game_result.dart';
+import '../domain/usecases/remove_station.dart';
+import '../domain/usecases/rename_station.dart';
 import '../domain/usecases/undo_game.dart';
 import '../domain/usecases/undo_last_game.dart';
+import '../domain/usecases/update_price_per_game.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -64,4 +68,9 @@ Future<void> setupDependencies({Database? database}) async {
       () => GetTabDetail(sl(), sl(), sl(), sl(), sl()));
   sl.registerLazySingleton<MarkPaid>(() => MarkPaid(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton<CloseTab>(() => CloseTab(sl(), sl()));
+  sl.registerLazySingleton<UpdatePricePerGame>(
+      () => UpdatePricePerGame(sl()));
+  sl.registerLazySingleton<AddStation>(() => AddStation(sl()));
+  sl.registerLazySingleton<RenameStation>(() => RenameStation(sl()));
+  sl.registerLazySingleton<RemoveStation>(() => RemoveStation(sl()));
 }

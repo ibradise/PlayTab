@@ -24,6 +24,21 @@ class SqfliteStationRepository implements StationRepository {
   }
 
   @override
+  Future<int> create(String name) => _db.insert('stations', {'name': name});
+
+  @override
+  Future<void> rename(int id, String name) => _db.update(
+        'stations',
+        {'name': name},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+  @override
+  Future<void> delete(int id) =>
+      _db.delete('stations', where: 'id = ?', whereArgs: [id]);
+
+  @override
   Future<void> assignTab(int stationId, Slot slot, int tabId) => _db.update(
         'stations',
         {slot.dbColumn: tabId},

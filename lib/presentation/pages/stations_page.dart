@@ -12,6 +12,7 @@ import 'game_history_page.dart';
 import 'new_player_page.dart';
 import 'open_tabs_page.dart';
 import 'pick_player_page.dart';
+import 'settings_page.dart';
 
 class StationsPage extends StatelessWidget {
   const StationsPage({super.key});
@@ -114,6 +115,17 @@ class _StationsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('PS Zone'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Settings',
+            onPressed: () async {
+              final bloc = context.read<StationsBloc>();
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsPage()),
+              );
+              bloc.add(const StationsLoadRequested());
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.history),
             tooltip: 'Game history',
