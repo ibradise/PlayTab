@@ -11,18 +11,6 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 
 ---
 
-## Task 2 — Open tabs & New player
-
-- [ ] Usecases: `GetOpenTabs` (with owed), `CreateTab`, `UpdateTabLabel`.
-- [ ] `presentation/bloc/tabs/`: `TabsBloc` (load, create, updateLabel).
-- [ ] `presentation/pages/`: `OpenTabsPage` (list `#N label` + owed + total), `NewPlayerPage` (one field + Create).
-- [ ] `presentation/widgets/`: `TabTile`, `AppScaffold`; `core/format.dart` birr formatter.
-- [ ] `main.dart`: `MaterialApp` home = `OpenTabsPage`.
-
-**Done when:** can create a tab and see it listed with `0 birr`; analyze/test pass.
-
----
-
 ## Task 3 — Station cards & placing tabs
 
 - [ ] Usecases: `GetStationsWithTabs`, `AssignTabToSlot`, `ClearSlot`, `MoveTabToStation` (single-station rule).

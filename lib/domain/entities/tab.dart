@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import 'tab_status.dart';
 
-class Tab {
+class Tab extends Equatable {
   const Tab({
     required this.id,
     this.label,
@@ -22,6 +24,9 @@ class Tab {
       (label == null || label!.isEmpty) ? '#$number' : '#$number $label';
 
   bool get isOpen => status == TabStatus.open;
+
+  @override
+  List<Object?> get props => [id, label, status, createdAt, closedAt];
 
   Tab copyWith({
     int? id,
