@@ -11,18 +11,6 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 
 ---
 
-## Task 3 — Station cards & placing tabs
-
-- [ ] Usecases: `GetStationsWithTabs`, `AssignTabToSlot`, `ClearSlot`, `MoveTabToStation` (single-station rule).
-- [ ] `presentation/bloc/stations/`: `StationsBloc` (load, assign, clear, move).
-- [ ] `presentation/pages/`: `StationsPage` (home; cards + bottom buttons), `PickPlayerPage`.
-- [ ] `presentation/widgets/`: `StationCard` (both slots, `vs`, empty-slot state).
-- [ ] Make `StationsPage` the home.
-
-**Done when:** can place/change/clear tabs on stations; a tab can't be on two stations; analyze/test pass.
-
----
-
 ## Task 4 — Record game result (core loop)
 
 - [ ] Usecase `RecordGameResult`: require both slots filled; create `Game` (winner, loser, station, time, `price` snapshot); free the loser slot; if exactly one tab is waiting, auto-place it, else signal "needs pick".

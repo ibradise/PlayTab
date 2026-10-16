@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'core/di.dart';
-import 'presentation/pages/open_tabs_page.dart';
+import 'presentation/pages/stations_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +16,7 @@ class PlayTabApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PS Zone Game Tracker',
-      home: const OpenTabsPage(),
+      home: const StationsPage(),
     );
   }
 }

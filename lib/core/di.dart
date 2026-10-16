@@ -12,7 +12,12 @@ import '../domain/repositories/payment_repository.dart';
 import '../domain/repositories/settings_repository.dart';
 import '../domain/repositories/station_repository.dart';
 import '../domain/repositories/tab_repository.dart';
+import '../domain/usecases/assign_tab_to_slot.dart';
+import '../domain/usecases/clear_slot.dart';
+import '../domain/usecases/create_tab.dart';
+import '../domain/usecases/get_available_tabs.dart';
 import '../domain/usecases/get_open_tabs.dart';
+import '../domain/usecases/get_stations_with_tabs.dart';
 import '../domain/usecases/get_tab_owed.dart';
 
 final GetIt sl = GetIt.instance;
@@ -32,4 +37,10 @@ Future<void> setupDependencies({Database? database}) async {
 
   sl.registerLazySingleton<GetTabOwed>(() => GetTabOwed(sl(), sl()));
   sl.registerLazySingleton<GetOpenTabs>(() => GetOpenTabs(sl(), sl()));
+  sl.registerLazySingleton<GetStationsWithTabs>(
+      () => GetStationsWithTabs(sl(), sl()));
+  sl.registerLazySingleton<GetAvailableTabs>(() => GetAvailableTabs(sl(), sl()));
+  sl.registerLazySingleton<CreateTab>(() => CreateTab(sl()));
+  sl.registerLazySingleton<AssignTabToSlot>(() => AssignTabToSlot(sl()));
+  sl.registerLazySingleton<ClearSlot>(() => ClearSlot(sl()));
 }

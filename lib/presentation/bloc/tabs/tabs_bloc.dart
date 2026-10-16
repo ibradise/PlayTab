@@ -12,7 +12,6 @@ class TabsBloc extends Bloc<TabsEvent, TabsState> {
   TabsBloc({required this.tabs, required this.getOpenTabs})
       : super(const TabsState()) {
     on<TabsLoadRequested>(_onLoad);
-    on<TabCreateRequested>(_onCreate);
     on<TabLabelUpdated>(_onUpdateLabel);
   }
 
@@ -28,18 +27,6 @@ class TabsBloc extends Bloc<TabsEvent, TabsState> {
       emit(TabsState(tabs: await getOpenTabs()));
     } catch (e) {
       emit(TabsState(error: e.toString()));
-    }
-  }
-
-  Future<void> _onCreate(
-    TabCreateRequested event,
-    Emitter<TabsState> emit,
-  ) async {
-    try {
-      await tabs.create(label: event.label);
-      add(const TabsLoadRequested());
-    } catch (e) {
-      emit(state.copyWith(error: e.toString()));
     }
   }
 

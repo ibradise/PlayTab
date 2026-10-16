@@ -26,7 +26,7 @@ class _OpenTabsView extends StatelessWidget {
   Future<void> _openNewPlayer(BuildContext context) async {
     final bloc = context.read<TabsBloc>();
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => NewPlayerPage(tabsBloc: bloc)),
+      MaterialPageRoute(builder: (_) => NewPlayerPage(createTab: sl())),
     );
     bloc.add(const TabsLoadRequested());
   }

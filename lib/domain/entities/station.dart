@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import 'slot.dart';
 
-class Station {
+class Station extends Equatable {
   const Station({
     required this.id,
     required this.name,
@@ -18,6 +20,9 @@ class Station {
   int? tabIdInSlot(Slot slot) => slot == Slot.a ? slotATabId : slotBTabId;
 
   bool hasTab(int tabId) => slotATabId == tabId || slotBTabId == tabId;
+
+  @override
+  List<Object?> get props => [id, name, slotATabId, slotBTabId];
 
   Station copyWith({
     int? id,

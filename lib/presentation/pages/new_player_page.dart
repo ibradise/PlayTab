@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../bloc/tabs/tabs_bloc.dart';
+import '../../domain/usecases/create_tab.dart';
 
+/// Creates a tab and pops with the created [Tab] (or null on cancel).
 class NewPlayerPage extends StatefulWidget {
-  const NewPlayerPage({super.key, required this.tabsBloc});
+  const NewPlayerPage({super.key, required this.createTab});
 
-  final TabsBloc tabsBloc;
+  final CreateTab createTab;
 
   @override
   State<NewPlayerPage> createState() => _NewPlayerPageState();
@@ -13,6 +14,7 @@ class NewPlayerPage extends StatefulWidget {
 
 class _NewPlayerPageState extends State<NewPlayerPage> {
   final _controller = TextEditingController();
+  bool _saving = false;
 
   @override
   void dispose() {
@@ -20,10 +22,12 @@ class _NewPlayerPageState extends State<NewPlayerPage> {
     super.dispose();
   }
 
-  void _create() {
+  Future<void> _create() async {
+    if (_saving) return;
+    setState(() => _saving = true);
     final label = _controller.text.trim();
-    widget.tabsBloc.add(TabCreateRequested(label.isEmpty ? null : label));
-    Navigator.of(context).pop();
+    final tab = await widget.createTab(label: label.isEmpty ? null : label);
+    if (mounted) Navigator.of(context).pop(tab);
   }
 
   @override
@@ -47,7 +51,7 @@ class _NewPlayerPageState extends State<NewPlayerPage> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
         child: ElevatedButton(
-          onPressed: _create,
+          onPressed: _saving ? null : _create,
           child: const Text('Create'),
         ),
       ),
