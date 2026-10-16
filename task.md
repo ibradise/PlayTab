@@ -11,16 +11,6 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 
 ---
 
-## Task 7 — Game history & per-game undo
-
-- [ ] Usecases: `GetGameHistory`, `UndoGame` (delete game, recompute owed, restore slot when it's the station's latest; block on conflict).
-- [ ] `presentation/pages/game_history_page.dart` + `bloc/game_history/`.
-- [ ] Entry per game (time, station, winner, loser, price) with Undo.
-
-**Done when:** any history game can be undone with correct recompute/restore; analyze/test pass.
-
----
-
 ## Task 8 — Settings
 
 - [ ] Usecases: `UpdatePricePerGame`, `AddStation`, `RenameStation`, `RemoveStation`.

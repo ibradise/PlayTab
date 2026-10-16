@@ -8,6 +8,7 @@ import '../../domain/entities/slot.dart';
 import '../../domain/entities/tab.dart';
 import '../bloc/stations/stations_bloc.dart';
 import '../widgets/station_card.dart';
+import 'game_history_page.dart';
 import 'new_player_page.dart';
 import 'open_tabs_page.dart';
 import 'pick_player_page.dart';
@@ -110,7 +111,22 @@ class _StationsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('PS Zone')),
+      appBar: AppBar(
+        title: const Text('PS Zone'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Game history',
+            onPressed: () async {
+              final bloc = context.read<StationsBloc>();
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const GameHistoryPage()),
+              );
+              bloc.add(const StationsLoadRequested());
+            },
+          ),
+        ],
+      ),
       body: BlocListener<StationsBloc, StationsState>(
         listenWhen: (previous, current) =>
             current.lastOutcome != null &&
