@@ -1,0 +1,4 @@
+enum PaymentAction {
+  closeTab,
+  keepOpen,
+}

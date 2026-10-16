@@ -11,17 +11,6 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 
 ---
 
-## Task 5 — Mark paid & close tab
-
-- [ ] Usecase `MarkPaid`: record `Payment` (full owed), then close or keep open; remove from station if closed.
-- [ ] Usecase `CloseTab` (0 owed).
-- [ ] `presentation/pages/tab_detail_page.dart`: owed, **Mark paid** with summary dialog (`N losses × price = total`) + close/keep-open choice, edit label.
-- [ ] Tests: payment records, owed → 0, tab leaves open list.
-
-**Done when:** full pay flow works per PRD §8; analyze/test pass.
-
----
-
 ## Task 6 — Tab detail: stats & head-to-head
 
 - [ ] Usecases: `GetTabStats` (played/won/lost), `GetHeadToHead`.

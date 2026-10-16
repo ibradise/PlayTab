@@ -6,6 +6,7 @@ import '../../../core/format.dart';
 import '../bloc/tabs/tabs_bloc.dart';
 import '../widgets/tab_tile.dart';
 import 'new_player_page.dart';
+import 'tab_detail_page.dart';
 
 class OpenTabsPage extends StatelessWidget {
   const OpenTabsPage({super.key});
@@ -27,6 +28,14 @@ class _OpenTabsView extends StatelessWidget {
     final bloc = context.read<TabsBloc>();
     await Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => NewPlayerPage(createTab: sl())),
+    );
+    bloc.add(const TabsLoadRequested());
+  }
+
+  Future<void> _openDetail(BuildContext context, int tabId) async {
+    final bloc = context.read<TabsBloc>();
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => TabDetailPage(tabId: tabId)),
     );
     bloc.add(const TabsLoadRequested());
   }
@@ -54,7 +63,11 @@ class _OpenTabsView extends StatelessWidget {
                   separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (context, i) {
                     final t = state.tabs[i];
-                    return TabTile(tab: t.tab, owed: t.owed);
+                    return TabTile(
+                      tab: t.tab,
+                      owed: t.owed,
+                      onTap: () => _openDetail(context, t.tab.id),
+                    );
                   },
                 ),
               ),

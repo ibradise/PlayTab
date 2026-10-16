@@ -14,11 +14,14 @@ import '../domain/repositories/station_repository.dart';
 import '../domain/repositories/tab_repository.dart';
 import '../domain/usecases/assign_tab_to_slot.dart';
 import '../domain/usecases/clear_slot.dart';
+import '../domain/usecases/close_tab.dart';
 import '../domain/usecases/create_tab.dart';
 import '../domain/usecases/get_available_tabs.dart';
 import '../domain/usecases/get_open_tabs.dart';
 import '../domain/usecases/get_stations_with_tabs.dart';
+import '../domain/usecases/get_tab_detail.dart';
 import '../domain/usecases/get_tab_owed.dart';
+import '../domain/usecases/mark_paid.dart';
 import '../domain/usecases/record_game_result.dart';
 import '../domain/usecases/undo_last_game.dart';
 
@@ -48,4 +51,8 @@ Future<void> setupDependencies({Database? database}) async {
   sl.registerLazySingleton<RecordGameResult>(
       () => RecordGameResult(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton<UndoLastGame>(() => UndoLastGame(sl(), sl()));
+  sl.registerLazySingleton<GetTabDetail>(
+      () => GetTabDetail(sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton<MarkPaid>(() => MarkPaid(sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton<CloseTab>(() => CloseTab(sl(), sl()));
 }
