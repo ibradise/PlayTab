@@ -2,10 +2,12 @@ import 'package:flutter/material.dart' hide Tab;
 
 import '../../core/di.dart';
 import '../../domain/entities/tab.dart';
-import '../../domain/usecases/get_available_tabs.dart';
+import '../../domain/entities/tab_candidate.dart';
+import '../../domain/usecases/get_pick_candidates.dart';
 import 'new_player_page.dart';
 
-/// Lists open tabs not on any station. Pops with the chosen [Tab].
+/// Lists open tabs: waiting ones first, then ones on other stations
+/// (choosing one confirms a move). Pops with the chosen [Tab].
 class PickPlayerPage extends StatefulWidget {
   const PickPlayerPage({super.key});
 
@@ -14,7 +16,34 @@ class PickPlayerPage extends StatefulWidget {
 }
 
 class _PickPlayerPageState extends State<PickPlayerPage> {
-  late final Future<List<Tab>> _future = sl<GetAvailableTabs>()();
+  late final Future<List<TabCandidate>> _future = sl<GetPickCandidates>()();
+
+  Future<void> _select(TabCandidate candidate) async {
+    if (candidate.onStation) {
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text('Move ${candidate.tab.displayLabel}?'),
+          content: Text(
+            'They are currently on ${candidate.currentStation!.name}. '
+            'They will be removed from that station.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Move'),
+            ),
+          ],
+        ),
+      );
+      if (ok != true) return;
+    }
+    if (mounted) Navigator.of(context).pop(candidate.tab);
+  }
 
   Future<void> _newPlayer() async {
     final tab = await Navigator.of(context).push<Tab>(
@@ -27,13 +56,13 @@ class _PickPlayerPageState extends State<PickPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Pick player')),
-      body: FutureBuilder<List<Tab>>(
+      body: FutureBuilder<List<TabCandidate>>(
         future: _future,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final tabs = snapshot.data!;
+          final candidates = snapshot.data!;
           return ListView(
             children: [
               ListTile(
@@ -42,10 +71,13 @@ class _PickPlayerPageState extends State<PickPlayerPage> {
                 onTap: _newPlayer,
               ),
               const Divider(height: 1),
-              for (final tab in tabs)
+              for (final candidate in candidates)
                 ListTile(
-                  title: Text(tab.displayLabel),
-                  onTap: () => Navigator.of(context).pop(tab),
+                  title: Text(candidate.tab.displayLabel),
+                  subtitle: candidate.onStation
+                      ? Text('on ${candidate.currentStation!.name}')
+                      : null,
+                  onTap: () => _select(candidate),
                 ),
             ],
           );

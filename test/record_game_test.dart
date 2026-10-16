@@ -85,4 +85,24 @@ void main() {
     expect(after.slotATabId, waiting.id);
     expect(after.slotBTabId, b.id);
   });
+
+  test('price snapshot only affects games recorded after the change',
+      () async {
+    final a = await tabs.create(label: 'Abebe');
+    final b = await tabs.create(label: 'Bekele');
+    final station = (await stations.getAll()).first;
+    await assign(stationId: station.id, slot: Slot.a, tabId: a.id);
+    await assign(stationId: station.id, slot: Slot.b, tabId: b.id);
+
+    await record(stationId: station.id, loserTabId: a.id);
+    await settings.setPricePerGame(20);
+
+    // a was freed by the first game (nobody was waiting); put him back.
+    await assign(stationId: station.id, slot: Slot.a, tabId: a.id);
+    await record(stationId: station.id, loserTabId: b.id);
+
+    final owed = GetTabOwed(games, payments);
+    expect(await owed(a.id), 15);
+    expect(await owed(b.id), 20);
+  });
 }

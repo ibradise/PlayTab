@@ -11,12 +11,4 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 
 ---
 
-## Task 9 — Edge cases, polish & acceptance pass
-
-- [ ] Single-station rule: move-with-confirmation when placing on a second station.
-- [ ] Price snapshot only affects future games.
-- [ ] Empty/half-empty station states; `0 birr` / no-owed handling.
-- [ ] Run through PRD §11 acceptance criteria end to end.
-- [ ] Final `flutter analyze` + `flutter test`, and a manual `flutter run` walkthrough.
-
-**Done when:** all PRD §11 criteria pass offline.
+**All tasks complete.** Verify against PRD §11 acceptance criteria: every criterion is covered by an automated test except the manual `flutter run` walkthrough (do this on a device once).

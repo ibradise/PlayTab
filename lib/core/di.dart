@@ -21,6 +21,7 @@ import '../domain/usecases/get_available_tabs.dart';
 import '../domain/usecases/get_game_history.dart';
 import '../domain/usecases/get_head_to_head.dart';
 import '../domain/usecases/get_open_tabs.dart';
+import '../domain/usecases/get_pick_candidates.dart';
 import '../domain/usecases/get_stations_with_tabs.dart';
 import '../domain/usecases/get_tab_detail.dart';
 import '../domain/usecases/get_tab_owed.dart';
@@ -55,6 +56,8 @@ Future<void> setupDependencies({Database? database}) async {
   sl.registerLazySingleton<GetStationsWithTabs>(
       () => GetStationsWithTabs(sl(), sl()));
   sl.registerLazySingleton<GetAvailableTabs>(() => GetAvailableTabs(sl(), sl()));
+  sl.registerLazySingleton<GetPickCandidates>(
+      () => GetPickCandidates(sl(), sl()));
   sl.registerLazySingleton<CreateTab>(() => CreateTab(sl()));
   sl.registerLazySingleton<AssignTabToSlot>(() => AssignTabToSlot(sl()));
   sl.registerLazySingleton<ClearSlot>(() => ClearSlot(sl()));
