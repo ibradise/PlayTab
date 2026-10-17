@@ -155,38 +155,59 @@ class _StationsView extends StatelessWidget {
       ),
       body: BlocListener<StationsBloc, StationsState>(
         listenWhen: (previous, current) =>
-            current.lastOutcome != null &&
-            current.lastOutcome != previous.lastOutcome,
-        listener: (context, state) =>
-            _handleOutcome(context, state.lastOutcome!),
-        child: BlocBuilder<StationsBloc, StationsState>(
-          builder: (context, state) {
-            if (state.loading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state.error != null) {
-              return Center(child: Text(state.error!));
-            }
-            return ListView(
-              padding: const EdgeInsets.all(12),
-              children: [
-                for (final data in state.stations)
-                  StationCard(
-                    data: data,
-                    onSlotTap: (slot) =>
-                        _pickAndAssign(context, data.station.id, slot),
-                    onSlotLongPress: (slot) =>
-                        _confirmClear(context, data.station.id, slot),
-                    onLost: (loserTabId) => context.read<StationsBloc>().add(
-                          LossRecorded(
-                            stationId: data.station.id,
-                            loserTabId: loserTabId,
-                          ),
-                        ),
-                  ),
-              ],
+            current.error != null && current.error != previous.error,
+        listener: (context, state) {
+          ScaffoldMessenger.of(context)
+            ..clearSnackBars()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.error!),
+                duration: const Duration(seconds: 4),
+              ),
             );
-          },
+          context
+              .read<StationsBloc>()
+              .add(const StationsErrorConsumed());
+        },
+        child: BlocListener<StationsBloc, StationsState>(
+          listenWhen: (previous, current) =>
+              current.lastOutcome != null &&
+              current.lastOutcome != previous.lastOutcome,
+          listener: (context, state) =>
+              _handleOutcome(context, state.lastOutcome!),
+          child: BlocBuilder<StationsBloc, StationsState>(
+            builder: (context, state) {
+              if (state.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state.stations.isEmpty) {
+                if (state.error != null) {
+                  return Center(child: Text(state.error!));
+                }
+                return const Center(child: Text('No stations yet'));
+              }
+              return ListView(
+                padding: const EdgeInsets.all(12),
+                children: [
+                  for (final data in state.stations)
+                    StationCard(
+                      data: data,
+                      onSlotTap: (slot) =>
+                          _pickAndAssign(context, data.station.id, slot),
+                      onSlotLongPress: (slot) =>
+                          _confirmClear(context, data.station.id, slot),
+                      onLost: (loserTabId) =>
+                          context.read<StationsBloc>().add(
+                                LossRecorded(
+                                  stationId: data.station.id,
+                                  loserTabId: loserTabId,
+                                ),
+                              ),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
@@ -194,20 +215,28 @@ class _StationsView extends StatelessWidget {
           children: [
             Expanded(
               child: TextButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const OpenTabsPage()),
-                ),
+                onPressed: () async {
+                  final bloc = context.read<StationsBloc>();
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const OpenTabsPage()),
+                  );
+                  bloc.add(const StationsLoadRequested());
+                },
                 icon: const Icon(Icons.list),
                 label: const Text('Open tabs'),
               ),
             ),
             Expanded(
               child: TextButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => NewPlayerPage(createTab: sl()),
-                  ),
-                ),
+                onPressed: () async {
+                  final bloc = context.read<StationsBloc>();
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => NewPlayerPage(createTab: sl()),
+                    ),
+                  );
+                  bloc.add(const StationsLoadRequested());
+                },
                 icon: const Icon(Icons.person_add),
                 label: const Text('New player'),
               ),

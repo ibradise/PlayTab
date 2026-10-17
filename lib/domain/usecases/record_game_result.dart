@@ -1,6 +1,7 @@
 import '../entities/record_game_outcome.dart';
 import '../entities/slot.dart';
 import '../entities/tab.dart';
+import '../exceptions.dart';
 import '../repositories/game_repository.dart';
 import '../repositories/settings_repository.dart';
 import '../repositories/station_repository.dart';
@@ -28,10 +29,12 @@ class RecordGameResult {
   }) async {
     final station = await _stations.getById(stationId);
     if (station == null) {
-      throw StateError('Station not found');
+      throw const ValidationException('Station not found');
     }
     if (!station.isFull) {
-      throw StateError('Both slots must be filled before recording a game');
+      throw const ValidationException(
+        'Both slots must be filled before recording a game',
+      );
     }
 
     final Slot loserSlot;
@@ -43,7 +46,7 @@ class RecordGameResult {
       loserSlot = Slot.b;
       winnerTabId = station.slotATabId!;
     } else {
-      throw StateError('Loser is not playing on this station');
+      throw const ValidationException('Loser is not playing on this station');
     }
 
     // Waiting players are open tabs not currently on any station. Computed

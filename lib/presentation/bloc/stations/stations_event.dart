@@ -53,3 +53,7 @@ class UndoRequested extends StationsEvent {
 class OutcomeConsumed extends StationsEvent {
   const OutcomeConsumed();
 }
+
+class StationsErrorConsumed extends StationsEvent {
+  const StationsErrorConsumed();
+}

@@ -27,6 +27,7 @@ class StationsBloc extends Bloc<StationsEvent, StationsState> {
     on<LossRecorded>(_onLoss);
     on<UndoRequested>(_onUndo);
     on<OutcomeConsumed>(_onOutcomeConsumed);
+    on<StationsErrorConsumed>(_onErrorConsumed);
   }
 
   final GetStationsWithTabs getStationsWithTabs;
@@ -59,7 +60,7 @@ class StationsBloc extends Bloc<StationsEvent, StationsState> {
       );
       await _reload(emit);
     } catch (e) {
-      emit(StationsState(error: e.toString(), stations: state.stations));
+      emit(StationsState(stations: await _safeStations(), error: e.toString()));
     }
   }
 
@@ -71,7 +72,7 @@ class StationsBloc extends Bloc<StationsEvent, StationsState> {
       await clearSlot(stationId: event.stationId, slot: event.slot);
       await _reload(emit);
     } catch (e) {
-      emit(StationsState(error: e.toString(), stations: state.stations));
+      emit(StationsState(stations: await _safeStations(), error: e.toString()));
     }
   }
 
@@ -87,7 +88,7 @@ class StationsBloc extends Bloc<StationsEvent, StationsState> {
       final stations = await getStationsWithTabs();
       emit(StationsState(stations: stations, lastOutcome: outcome));
     } catch (e) {
-      emit(StationsState(error: e.toString(), stations: state.stations));
+      emit(StationsState(stations: await _safeStations(), error: e.toString()));
     }
   }
 
@@ -99,7 +100,7 @@ class StationsBloc extends Bloc<StationsEvent, StationsState> {
       await undoLastGame();
       await _reload(emit);
     } catch (e) {
-      emit(StationsState(error: e.toString(), stations: state.stations));
+      emit(StationsState(stations: await _safeStations(), error: e.toString()));
     }
   }
 
@@ -110,7 +111,22 @@ class StationsBloc extends Bloc<StationsEvent, StationsState> {
     emit(StationsState(stations: state.stations));
   }
 
+  void _onErrorConsumed(
+    StationsErrorConsumed event,
+    Emitter<StationsState> emit,
+  ) {
+    emit(StationsState(stations: state.stations));
+  }
+
   Future<void> _reload(Emitter<StationsState> emit) async {
     emit(StationsState(stations: await getStationsWithTabs()));
+  }
+
+  Future<List<StationWithTabs>> _safeStations() async {
+    try {
+      return await getStationsWithTabs();
+    } catch (_) {
+      return state.stations;
+    }
   }
 }

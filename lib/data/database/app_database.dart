@@ -18,11 +18,15 @@ class AppDatabase {
     if (_db != null) return _db!;
     final location = _inMemory
         ? inMemoryDatabasePath
-        : p.join(await getDatabasesPath(), _name);
-    _db = await _factory.openDatabase(
-      location,
-      options: OpenDatabaseOptions(version: 1, onCreate: _onCreate),
-    );
+        : p.join(await _factory.getDatabasesPath(), _name);
+  _db = await _factory.openDatabase(
+    location,
+    options: OpenDatabaseOptions(
+      version: 2,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    ),
+  );
     return _db!;
   }
 
@@ -33,7 +37,8 @@ class AppDatabase {
         label TEXT,
         status TEXT NOT NULL,
         created_at INTEGER NOT NULL,
-        closed_at INTEGER
+        closed_at INTEGER,
+        display_number INTEGER
       )
     ''');
     await db.execute('''
@@ -72,6 +77,30 @@ class AppDatabase {
     await db.insert('stations', {'name': 'TV 1'});
     await db.insert('stations', {'name': 'TV 2'});
     await db.insert('settings', {'id': 1, 'price_per_game': 15});
+    await _backfillDisplayNumbers(db);
+  }
+
+  static Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        'ALTER TABLE tabs ADD COLUMN display_number INTEGER',
+      );
+      await _backfillDisplayNumbers(db);
+    }
+  }
+
+  static Future<void> _backfillDisplayNumbers(Database db) async {
+    await db.execute(
+      'UPDATE tabs SET display_number = id WHERE display_number IS NULL',
+    );
+    await db.execute('''
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_tabs_display_number_open
+      ON tabs (display_number) WHERE status = 'open'
+    ''');
   }
 
   Future<void> close() async {

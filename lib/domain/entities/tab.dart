@@ -9,6 +9,7 @@ class Tab extends Equatable {
     required this.status,
     required this.createdAt,
     this.closedAt,
+    this.displayNumber,
   });
 
   final int id;
@@ -17,8 +18,11 @@ class Tab extends Equatable {
   final int createdAt;
   final int? closedAt;
 
-  /// Display number is the auto-increment id (#N).
-  int get number => id;
+  final int? displayNumber;
+
+  /// Recycled number (smallest free among open tabs); falls back to id for
+  /// tabs from before the column existed.
+  int get number => displayNumber ?? id;
 
   String get displayLabel =>
       (label == null || label!.isEmpty) ? '#$number' : '#$number $label';
@@ -26,7 +30,8 @@ class Tab extends Equatable {
   bool get isOpen => status == TabStatus.open;
 
   @override
-  List<Object?> get props => [id, label, status, createdAt, closedAt];
+  List<Object?> get props =>
+      [id, label, status, createdAt, closedAt, displayNumber];
 
   Tab copyWith({
     int? id,
@@ -34,6 +39,7 @@ class Tab extends Equatable {
     TabStatus? status,
     int? createdAt,
     int? closedAt,
+    int? displayNumber,
   }) {
     return Tab(
       id: id ?? this.id,
@@ -41,6 +47,7 @@ class Tab extends Equatable {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       closedAt: closedAt ?? this.closedAt,
+      displayNumber: displayNumber ?? this.displayNumber,
     );
   }
 
@@ -50,6 +57,7 @@ class Tab extends Equatable {
         'status': status.dbValue,
         'created_at': createdAt,
         'closed_at': closedAt,
+        'display_number': displayNumber,
       };
 
   factory Tab.fromMap(Map<String, Object?> map) => Tab(
@@ -58,5 +66,6 @@ class Tab extends Equatable {
         status: TabStatus.fromDb(map['status'] as String?),
         createdAt: map['created_at'] as int,
         closedAt: map['closed_at'] as int?,
+        displayNumber: map['display_number'] as int?,
       );
 }
