@@ -1,5 +1,11 @@
 String formatBirr(int amount) => '$amount birr';
 
+String formatBirrDecimal(double amount) {
+  final rounded = amount.roundToDouble();
+  if (amount == rounded) return '${rounded.toInt()} birr';
+  return '${amount.toStringAsFixed(1)} birr';
+}
+
 String formatDateTime(int epochMs) {
   final dt = DateTime.fromMillisecondsSinceEpoch(epochMs);
   const months = [

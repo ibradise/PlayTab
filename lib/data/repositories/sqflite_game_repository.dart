@@ -62,4 +62,13 @@ class SqfliteGameRepository implements GameRepository {
     );
     return Sqflite.firstIntValue(rows) ?? 0;
   }
+
+  @override
+  Future<int> sumLostPricesForOpenTabs() async {
+    final rows = await _db.rawQuery(
+      'SELECT COALESCE(SUM(price), 0) AS total FROM games'
+      " WHERE loser_tab_id IN (SELECT id FROM tabs WHERE status = 'open')",
+    );
+    return Sqflite.firstIntValue(rows) ?? 0;
+  }
 }

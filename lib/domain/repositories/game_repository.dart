@@ -11,4 +11,7 @@ abstract interface class GameRepository {
   Future<void> delete(int id);
   Future<List<int>> lostPricesFor(int tabId);
   Future<int> wonCountFor(int tabId);
+
+  /// Sum of prices of games lost by tabs that are currently open.
+  Future<int> sumLostPricesForOpenTabs();
 }

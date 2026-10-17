@@ -20,6 +20,7 @@ import '../domain/usecases/create_tab.dart';
 import '../domain/usecases/get_available_tabs.dart';
 import '../domain/usecases/get_game_history.dart';
 import '../domain/usecases/get_head_to_head.dart';
+import '../domain/usecases/get_money_report.dart';
 import '../domain/usecases/get_open_tabs.dart';
 import '../domain/usecases/get_pick_candidates.dart';
 import '../domain/usecases/get_stations_with_tabs.dart';
@@ -50,6 +51,7 @@ Future<void> setupDependencies({Database? database}) async {
       () => SqfliteSettingsRepository(sl()));
 
   sl.registerLazySingleton<GetTabOwed>(() => GetTabOwed(sl(), sl()));
+  sl.registerLazySingleton<GetMoneyReport>(() => GetMoneyReport(sl(), sl()));
   sl.registerLazySingleton<GetTabStats>(() => GetTabStats(sl()));
   sl.registerLazySingleton<GetHeadToHead>(() => GetHeadToHead(sl(), sl()));
   sl.registerLazySingleton<GetOpenTabs>(() => GetOpenTabs(sl(), sl()));

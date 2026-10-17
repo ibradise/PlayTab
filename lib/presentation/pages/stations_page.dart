@@ -8,12 +8,13 @@ import '../../domain/entities/slot.dart';
 import '../../domain/entities/tab.dart';
 import '../../domain/repositories/tab_repository.dart';
 import '../bloc/stations/stations_bloc.dart';
-import '../widgets/station_card.dart';
 import 'game_history_page.dart';
+import 'money_page.dart';
 import 'new_player_page.dart';
 import 'open_tabs_page.dart';
 import 'pick_player_page.dart';
 import 'settings_page.dart';
+import '../widgets/station_card.dart';
 
 class StationsPage extends StatelessWidget {
   const StationsPage({super.key});
@@ -129,6 +130,13 @@ class _StationsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('PS Zone'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.payments_outlined),
+            tooltip: 'Money',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const MoneyPage()),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             tooltip: 'Settings',

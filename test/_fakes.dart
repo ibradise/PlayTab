@@ -115,6 +115,9 @@ class FakeStationRepository implements StationRepository {
 }
 
 class FakeGameRepository implements GameRepository {
+  FakeGameRepository([this._tabs]);
+
+  final FakeTabRepository? _tabs;
   final List<Game> games = [];
   int _nextId = 1;
 
@@ -152,11 +155,31 @@ class FakeGameRepository implements GameRepository {
   @override
   Future<int> wonCountFor(int tabId) async =>
       games.where((g) => g.winnerTabId == tabId).length;
+
+  @override
+  Future<int> sumLostPricesForOpenTabs() async {
+    final tabs = _tabs;
+    if (tabs == null) return 0;
+    return games
+        .where((g) =>
+            tabs.tabs.any((t) => t.id == g.loserTabId && t.isOpen))
+        .fold<int>(0, (sum, g) => sum + g.price);
+  }
 }
 
 class FakePaymentRepository implements PaymentRepository {
+  FakePaymentRepository([this._tabs]);
+
+  final FakeTabRepository? _tabs;
   final List<Payment> payments = [];
   int _nextId = 1;
+
+  /// Adds a payment at a specific time (test-only helper, not in interface).
+  void addAt(int tabId, int amount, int paidAt) {
+    payments.add(
+      Payment(id: _nextId++, tabId: tabId, amount: amount, paidAt: paidAt),
+    );
+  }
 
   @override
   Future<void> insert({required int tabId, required int amount}) async {
@@ -174,6 +197,26 @@ class FakePaymentRepository implements PaymentRepository {
       if (p.tabId == tabId) sum += p.amount;
     }
     return sum;
+  }
+
+  @override
+  Future<int> sumSince(int fromEpochMs) async =>
+      payments.where((p) => p.paidAt >= fromEpochMs).fold<int>(
+            0,
+            (sum, p) => sum + p.amount,
+          );
+
+  @override
+  Future<int> sumAll() async =>
+      payments.fold<int>(0, (sum, p) => sum + p.amount);
+
+  @override
+  Future<int> sumForOpenTabs() async {
+    final tabs = _tabs;
+    if (tabs == null) return 0;
+    return payments
+        .where((p) => tabs.tabs.any((t) => t.id == p.tabId && t.isOpen))
+        .fold<int>(0, (sum, p) => sum + p.amount);
   }
 }
 

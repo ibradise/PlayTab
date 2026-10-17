@@ -37,4 +37,30 @@ class SqflitePaymentRepository implements PaymentRepository {
     );
     return rows.fold<int>(0, (sum, r) => sum + (r['amount'] as int));
   }
+
+  @override
+  Future<int> sumSince(int fromEpochMs) async {
+    final row = await _db.rawQuery(
+      'SELECT COALESCE(SUM(amount), 0) AS total'
+      ' FROM payments WHERE paid_at >= ?',
+      [fromEpochMs],
+    );
+    return row.first['total'] as int;
+  }
+
+  @override
+  Future<int> sumAll() async {
+    final row = await _db
+        .rawQuery('SELECT COALESCE(SUM(amount), 0) AS total FROM payments');
+    return row.first['total'] as int;
+  }
+
+  @override
+  Future<int> sumForOpenTabs() async {
+    final row = await _db.rawQuery(
+      'SELECT COALESCE(SUM(amount), 0) AS total FROM payments'
+      " WHERE tab_id IN (SELECT id FROM tabs WHERE status = 'open')",
+    );
+    return row.first['total'] as int;
+  }
 }

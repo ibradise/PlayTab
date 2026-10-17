@@ -12,3 +12,4 @@ Spec: [`PRD.md`](./PRD.md) · Agent guide: [`agent.md`](./agent.md)
 ---
 
 **All tasks complete.** Verify against PRD §11 acceptance criteria: every criterion is covered by an automated test except the manual `flutter run` walkthrough (do this on a device once).
+
