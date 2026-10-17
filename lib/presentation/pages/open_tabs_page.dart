@@ -42,58 +42,50 @@ class _OpenTabsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Open tabs')),
-      body: BlocBuilder<TabsBloc, TabsState>(
-        builder: (context, state) {
-          if (state.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state.error != null) {
-            return Center(child: Text(state.error!));
-          }
-          if (state.tabs.isEmpty) {
-            return const Center(child: Text('No open tabs'));
-          }
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.separated(
-                  itemCount: state.tabs.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (context, i) {
-                    final t = state.tabs[i];
-                    return TabTile(
-                      tab: t.tab,
-                      owed: t.owed,
-                      onTap: () => _openDetail(context, t.tab.id),
-                    );
-                  },
-                ),
+    return BlocBuilder<TabsBloc, TabsState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Open tabs')),
+          body: state.loading
+              ? const Center(child: CircularProgressIndicator())
+              : state.error != null
+                  ? Center(child: Text(state.error!))
+                  : state.tabs.isEmpty
+                      ? const Center(child: Text('No open tabs'))
+                      : ListView.separated(
+                          itemCount: state.tabs.length,
+                          separatorBuilder: (_, _) => const Divider(height: 1),
+                          itemBuilder: (context, i) {
+                            final t = state.tabs[i];
+                            return TabTile(
+                              tab: t.tab,
+                              owed: t.owed,
+                              onTap: () => _openDetail(context, t.tab.id),
+                            );
+                          },
+                        ),
+          bottomNavigationBar: BottomAppBar(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Total owed:'),
+                  Text(
+                    formatBirr(state.totalOwed),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
               ),
-              const Divider(height: 1),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Total owed:'),
-                    Text(
-                      formatBirr(state.totalOwed),
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openNewPlayer(context),
-        icon: const Icon(Icons.person_add),
-        label: const Text('New player'),
-      ),
+            ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => _openNewPlayer(context),
+            icon: const Icon(Icons.person_add),
+            label: const Text('New player'),
+          ),
+        );
+      },
     );
   }
 }

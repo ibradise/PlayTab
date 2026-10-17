@@ -16,6 +16,7 @@ class PlayTabApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PS Zone Game Tracker',
+      debugShowCheckedModeBanner: false,
       home: const StationsPage(),
     );
   }

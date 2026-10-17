@@ -6,6 +6,7 @@ import '../../core/format.dart';
 import '../../domain/entities/record_game_outcome.dart';
 import '../../domain/entities/slot.dart';
 import '../../domain/entities/tab.dart';
+import '../../domain/repositories/tab_repository.dart';
 import '../bloc/stations/stations_bloc.dart';
 import '../widgets/station_card.dart';
 import 'game_history_page.dart';
@@ -82,11 +83,24 @@ class _StationsView extends StatelessWidget {
     RecordGameOutcome outcome,
   ) async {
     final bloc = context.read<StationsBloc>();
-    ScaffoldMessenger.of(context).showSnackBar(
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    final loser =
+        await sl<TabRepository>().getById(outcome.game.loserTabId);
+    final loserName = loser?.displayLabel ?? '#${outcome.game.loserTabId}';
+
+    // Replace any queued bar so tapping several games quickly never leaves
+    // an old bar (whose Undo would target the wrong game) on screen.
+    messenger
+      ..clearSnackBars()
+      ..showSnackBar(
       SnackBar(
         content: Text(
-          '#${outcome.game.loserTabId} lost • +${formatBirr(outcome.game.price)}',
+          '$loserName lost • +${formatBirr(outcome.game.price)}',
         ),
+        duration: const Duration(seconds: 4),
+        persist: false,
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () => bloc.add(const UndoRequested()),
@@ -96,14 +110,14 @@ class _StationsView extends StatelessWidget {
     bloc.add(const OutcomeConsumed());
 
     if (outcome.needsPick) {
-      final tab = await Navigator.of(context).push<Tab>(
+      final picked = await navigator.push<Tab>(
         MaterialPageRoute(builder: (_) => const PickPlayerPage()),
       );
-      if (tab != null) {
+      if (picked != null) {
         bloc.add(TabAssigned(
           stationId: outcome.game.stationId,
           slot: outcome.freedSlot,
-          tabId: tab.id,
+          tabId: picked.id,
         ));
       }
     }

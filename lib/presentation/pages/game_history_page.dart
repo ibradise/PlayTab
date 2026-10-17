@@ -32,9 +32,14 @@ class _GameHistoryView extends StatelessWidget {
             current.lastUndoResult != null &&
             current.lastUndoResult != previous.lastUndoResult,
         listener: (context, state) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.lastUndoResult!.displayMessage)),
-          );
+          ScaffoldMessenger.of(context)
+            ..clearSnackBars()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.lastUndoResult!.displayMessage),
+                duration: const Duration(seconds: 4),
+              ),
+            );
           context
               .read<GameHistoryBloc>()
               .add(const UndoResultConsumed());

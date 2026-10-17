@@ -37,9 +37,14 @@ class _SettingsPageState extends State<SettingsPage> {
         listenWhen: (previous, current) =>
             current.message != null && current.message != previous.message,
         listener: (context, state) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message!)),
-          );
+          ScaffoldMessenger.of(context)
+            ..clearSnackBars()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.message!),
+                duration: const Duration(seconds: 4),
+              ),
+            );
           context.read<SettingsBloc>().add(const SettingsMessageConsumed());
         },
         builder: (context, state) {
@@ -143,9 +148,14 @@ class _SettingsPageState extends State<SettingsPage> {
   void _savePrice(SettingsBloc bloc) {
     final price = int.tryParse(_priceController.text.trim());
     if (price == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a whole number of birr')),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Enter a whole number of birr'),
+            duration: Duration(seconds: 4),
+          ),
+        );
       return;
     }
     bloc.add(PriceSaveRequested(price));
@@ -199,33 +209,54 @@ Future<String?> _promptName(
   required String title,
   String? initial,
 }) {
-  final controller = TextEditingController(text: initial);
   return showDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(title),
+    builder: (ctx) => _NameDialog(title: title, initial: initial),
+  );
+}
+
+class _NameDialog extends StatefulWidget {
+  const _NameDialog({required this.title, this.initial});
+
+  final String title;
+  final String? initial;
+
+  @override
+  State<_NameDialog> createState() => _NameDialogState();
+}
+
+class _NameDialogState extends State<_NameDialog> {
+  late final _controller = TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
       content: TextField(
-        controller: controller,
+        controller: _controller,
         autofocus: true,
         decoration: const InputDecoration(
           labelText: 'Name',
           border: OutlineInputBorder(),
         ),
-        onSubmitted: (value) => Navigator.of(ctx).pop(value),
+        onSubmitted: (value) => Navigator.of(context).pop(value),
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
+          onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
         ),
         FilledButton(
-          onPressed: () => Navigator.of(ctx).pop(controller.text),
+          onPressed: () => Navigator.of(context).pop(_controller.text),
           child: const Text('Save'),
         ),
       ],
-    ),
-  ).then((value) {
-    controller.dispose();
-    return value;
-  });
+    );
+  }
 }
