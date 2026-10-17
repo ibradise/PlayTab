@@ -4,6 +4,8 @@ import '../../core/di.dart';
 import '../../domain/entities/tab.dart';
 import '../../domain/entities/tab_candidate.dart';
 import '../../domain/usecases/get_pick_candidates.dart';
+import '../widgets/app_scaffold.dart';
+import '../widgets/glass_card.dart';
 import 'new_player_page.dart';
 
 /// Lists open tabs: waiting ones first, then ones on other stations
@@ -54,8 +56,8 @@ class _PickPlayerPageState extends State<PickPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Pick player')),
+    return AppScaffold(
+      title: 'Pick player',
       body: FutureBuilder<List<TabCandidate>>(
         future: _future,
         builder: (context, snapshot) {
@@ -64,21 +66,28 @@ class _PickPlayerPageState extends State<PickPlayerPage> {
           }
           final candidates = snapshot.data!;
           return ListView(
+            padding: const EdgeInsets.all(12),
             children: [
-              ListTile(
-                leading: const Icon(Icons.person_add),
-                title: const Text('New player'),
-                onTap: _newPlayer,
-              ),
-              const Divider(height: 1),
-              for (final candidate in candidates)
-                ListTile(
-                  title: Text(candidate.tab.displayLabel),
-                  subtitle: candidate.onStation
-                      ? Text('on ${candidate.currentStation!.name}')
-                      : null,
-                  onTap: () => _select(candidate),
+              GlassCard(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.person_add),
+                      title: const Text('New player'),
+                      onTap: _newPlayer,
+                    ),
+                    for (final candidate in candidates)
+                      ListTile(
+                        title: Text(candidate.tab.displayLabel),
+                        subtitle: candidate.onStation
+                            ? Text('on ${candidate.currentStation!.name}')
+                            : null,
+                        onTap: () => _select(candidate),
+                      ),
+                  ],
                 ),
+              ),
             ],
           );
         },

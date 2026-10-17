@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/theme_controller.dart';
 import '../../../domain/entities/station.dart';
 import '../../../domain/repositories/settings_repository.dart';
 import '../../../domain/repositories/station_repository.dart';
@@ -20,12 +21,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     required this.addStation,
     required this.renameStation,
     required this.removeStation,
+    required this.themeController,
   }) : super(const SettingsState()) {
     on<SettingsLoadRequested>(_onLoad);
     on<PriceSaveRequested>(_onPrice);
     on<StationAddRequested>(_onAdd);
     on<StationRenameRequested>(_onRename);
     on<StationRemoveRequested>(_onRemove);
+    on<ThemeToggleRequested>(_onThemeToggle);
     on<SettingsMessageConsumed>(_onConsumed);
   }
 
@@ -35,6 +38,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final AddStation addStation;
   final RenameStation renameStation;
   final RemoveStation removeStation;
+  final ThemeController themeController;
 
   Future<void> _onLoad(
     SettingsLoadRequested event,
@@ -96,24 +100,44 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
   }
 
+  Future<void> _onThemeToggle(
+    ThemeToggleRequested event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      await settings.setDarkMode(event.dark);
+      // Persist first, then flip the app theme atomically.
+      themeController.setDark(event.dark);
+      emit(await _loaded());
+    } catch (e) {
+      emit(_withMessage(e.toString()));
+    }
+  }
+
   void _onConsumed(
     SettingsMessageConsumed event,
     Emitter<SettingsState> emit,
   ) {
     emit(SettingsState(
       pricePerGame: state.pricePerGame,
+      darkMode: state.darkMode,
       stations: state.stations,
     ));
   }
 
-  Future<SettingsState> _loaded({String? message}) async => SettingsState(
-        pricePerGame: (await settings.get()).pricePerGame,
-        stations: await stations.getAll(),
-        message: message,
-      );
+  Future<SettingsState> _loaded({String? message}) async {
+    final setting = await settings.get();
+    return SettingsState(
+      pricePerGame: setting.pricePerGame,
+      darkMode: setting.darkMode,
+      stations: await stations.getAll(),
+      message: message,
+    );
+  }
 
   SettingsState _withMessage(String message) => SettingsState(
         pricePerGame: state.pricePerGame,
+        darkMode: state.darkMode,
         stations: state.stations,
         message: message,
       );

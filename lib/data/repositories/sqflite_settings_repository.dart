@@ -26,4 +26,12 @@ class SqfliteSettingsRepository implements SettingsRepository {
         where: 'id = ?',
         whereArgs: [AppSetting.settingsRowId],
       );
+
+  @override
+  Future<void> setDarkMode(bool dark) => _db.update(
+        'settings',
+        {'dark_mode': dark ? 1 : 0},
+        where: 'id = ?',
+        whereArgs: [AppSetting.settingsRowId],
+      );
 }

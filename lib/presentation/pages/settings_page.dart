@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/di.dart';
 import '../../domain/entities/station.dart';
 import '../bloc/settings/settings_bloc.dart';
+import '../widgets/app_scaffold.dart';
+import '../widgets/glass_card.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -32,6 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
         addStation: sl(),
         renameStation: sl(),
         removeStation: sl(),
+        themeController: sl(),
       )..add(const SettingsLoadRequested()),
       child: BlocConsumer<SettingsBloc, SettingsState>(
         listenWhen: (previous, current) =>
@@ -54,8 +57,8 @@ class _SettingsPageState extends State<SettingsPage> {
           }
           final bloc = context.read<SettingsBloc>();
 
-          return Scaffold(
-            appBar: AppBar(title: const Text('Settings')),
+          return AppScaffold(
+            title: 'Settings',
             body: state.loading
                 ? const Center(child: CircularProgressIndicator())
                 : ListView(
@@ -71,31 +74,51 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                           ),
                         ),
-                      Text(
-                        'Price per game',
-                        style: Theme.of(context).textTheme.titleMedium,
+                      GlassCard(
+                        padding: const EdgeInsets.all(16),
+                        child: SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Dark theme'),
+                          subtitle: const Text('Midnight indigo'),
+                          value: state.darkMode,
+                          onChanged: (dark) =>
+                              bloc.add(ThemeToggleRequested(dark)),
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _priceController,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                labelText: 'Birr',
-                                border: OutlineInputBorder(),
-                              ),
+                      const SizedBox(height: 18),
+                      GlassCard(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Price per game',
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          FilledButton(
-                            onPressed: () => _savePrice(bloc),
-                            child: const Text('Save'),
-                          ),
-                        ],
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _priceController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Birr',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                FilledButton(
+                                  onPressed: () => _savePrice(bloc),
+                                  child: const Text('Save'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 18),
                       Row(
                         children: [
                           Text(
@@ -111,32 +134,39 @@ class _SettingsPageState extends State<SettingsPage> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      for (final station in state.stations)
-                        ListTile(
-                          title: Text(station.name),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit_outlined),
-                                tooltip: 'Rename',
-                                onPressed: () => _renameStation(
-                                  bloc,
-                                  station,
+                      GlassCard(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Column(
+                          children: [
+                            for (final station in state.stations)
+                              ListTile(
+                                title: Text(station.name),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit_outlined),
+                                      tooltip: 'Rename',
+                                      onPressed: () => _renameStation(
+                                        bloc,
+                                        station,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete_outline),
+                                      tooltip: 'Remove',
+                                      onPressed: () => _removeStation(
+                                        context,
+                                        bloc,
+                                        station,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.delete_outline),
-                                tooltip: 'Remove',
-                                onPressed: () => _removeStation(
-                                  context,
-                                  bloc,
-                                  station,
-                                ),
-                              ),
-                            ],
-                          ),
+                          ],
                         ),
+                      ),
                     ],
                   ),
           );

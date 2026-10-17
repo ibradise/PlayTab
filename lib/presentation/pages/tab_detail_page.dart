@@ -6,6 +6,8 @@ import '../../core/format.dart';
 import '../../domain/entities/payment_action.dart';
 import '../../domain/entities/tab_detail.dart';
 import '../bloc/tab_detail/tab_detail_bloc.dart';
+import '../widgets/app_scaffold.dart';
+import '../widgets/glass_card.dart';
 
 class TabDetailPage extends StatelessWidget {
   const TabDetailPage({super.key, required this.tabId});
@@ -96,8 +98,8 @@ class _TabDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Tab detail')),
+    return AppScaffold(
+      title: 'Tab detail',
       body: BlocConsumer<TabDetailBloc, TabDetailState>(
         listenWhen: (previous, current) =>
             current.lastPaymentAction != null &&
@@ -124,12 +126,25 @@ class _TabDetailView extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text(detail.tab.displayLabel,
-                  style: theme.textTheme.headlineSmall),
-              const SizedBox(height: 8),
-              Text('Amount owed: ${formatBirr(detail.owed)}',
-                  style: theme.textTheme.titleMedium),
-              const SizedBox(height: 24),
+              GlassCard(
+                padding: const EdgeInsets.all(16),
+                opacity: 0.85,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      detail.tab.displayLabel,
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Amount owed: ${formatBirr(detail.owed)}',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
               if (detail.owed > 0)
                 FilledButton(
                   onPressed: () => _markPaid(context, detail),
@@ -141,28 +156,42 @@ class _TabDetailView extends StatelessWidget {
                       context.read<TabDetailBloc>().add(const CloseTabRequested()),
                   child: const Text('Close tab'),
                 ),
-              const SizedBox(height: 8),
               OutlinedButton(
                 onPressed: () => _editLabel(context, detail),
                 child: const Text('Edit label'),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               Text('Stats', style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
-              _statRow('Played', detail.stats.played),
-              _statRow('Won', detail.stats.won),
-              _statRow('Lost', detail.stats.lost),
+              GlassCard(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Column(
+                  children: [
+                    _statRow('Played', detail.stats.played),
+                    _statRow('Won', detail.stats.won),
+                    _statRow('Lost', detail.stats.lost),
+                  ],
+                ),
+              ),
               if (detail.headToHead.isNotEmpty) ...[
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
                 Text('Head-to-head', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
-                for (final h in detail.headToHead)
-                  ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(h.other.displayLabel),
-                    trailing: Text('${h.wonAgainst} - ${h.lostAgainst}'),
+                GlassCard(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Column(
+                    children: [
+                      for (final h in detail.headToHead)
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(h.other.displayLabel),
+                          trailing: Text('${h.wonAgainst} - ${h.lostAgainst}'),
+                        ),
+                    ],
                   ),
+                ),
               ],
             ],
           );

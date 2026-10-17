@@ -230,4 +230,9 @@ class FakeSettingsRepository implements SettingsRepository {
   Future<void> setPricePerGame(int price) async {
     setting = setting.copyWith(pricePerGame: price);
   }
+
+  @override
+  Future<void> setDarkMode(bool dark) async {
+    setting = setting.copyWith(darkMode: dark);
+  }
 }

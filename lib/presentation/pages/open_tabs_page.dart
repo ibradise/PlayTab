@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/di.dart';
 import '../../../core/format.dart';
 import '../bloc/tabs/tabs_bloc.dart';
+import '../widgets/app_scaffold.dart';
 import '../widgets/tab_tile.dart';
 import 'new_player_page.dart';
 import 'tab_detail_page.dart';
@@ -44,8 +45,8 @@ class _OpenTabsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TabsBloc, TabsState>(
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(title: const Text('Open tabs')),
+        return AppScaffold(
+          title: 'Open tabs',
           body: state.loading
               ? const Center(child: CircularProgressIndicator())
               : state.error != null

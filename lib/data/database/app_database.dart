@@ -22,7 +22,7 @@ class AppDatabase {
   _db = await _factory.openDatabase(
     location,
     options: OpenDatabaseOptions(
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     ),
@@ -70,7 +70,8 @@ class AppDatabase {
     await db.execute('''
       CREATE TABLE settings (
         id INTEGER PRIMARY KEY CHECK (id = 1),
-        price_per_game INTEGER NOT NULL
+        price_per_game INTEGER NOT NULL,
+        dark_mode INTEGER NOT NULL DEFAULT 0
       )
     ''');
 
@@ -90,6 +91,11 @@ class AppDatabase {
         'ALTER TABLE tabs ADD COLUMN display_number INTEGER',
       );
       await _backfillDisplayNumbers(db);
+    }
+    if (oldVersion < 3) {
+      await db.execute(
+        'ALTER TABLE settings ADD COLUMN dark_mode INTEGER NOT NULL DEFAULT 0',
+      );
     }
   }
 

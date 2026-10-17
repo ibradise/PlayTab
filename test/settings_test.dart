@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:playtab/data/database/app_database.dart';
+import 'package:playtab/core/theme_controller.dart';
 import 'package:playtab/data/repositories/sqflite_settings_repository.dart';
 import 'package:playtab/data/repositories/sqflite_station_repository.dart';
 import 'package:playtab/domain/exceptions.dart';
@@ -65,4 +66,23 @@ void main() {
     expect(await stations.getById(created), isNull);
     expect(await stations.getAll(), hasLength(2));
   });
+
+  test('theme choice is persisted and round-trips', () async {
+    expect((await settings.get()).darkMode, isFalse);
+
+    final controller = ThemeController()
+      ..init(settings);
+    await Future<void>.delayed(Duration.zero);
+    expect(controller.isDark, isFalse);
+
+    await settings.setDarkMode(true);
+    final darkController = ThemeController()..init(settings);
+    await Future<void>.delayed(Duration.zero);
+    expect(darkController.isDark, isTrue);
+
+    // And back.
+    await settings.setDarkMode(false);
+    expect((await settings.get()).darkMode, isFalse);
+  });
 }
+

@@ -4,6 +4,8 @@ import '../../core/di.dart';
 import '../../core/format.dart';
 import '../../domain/entities/money_report.dart';
 import '../../domain/usecases/get_money_report.dart';
+import '../widgets/app_scaffold.dart';
+import '../widgets/glass_card.dart';
 
 class MoneyPage extends StatefulWidget {
   const MoneyPage({super.key});
@@ -21,8 +23,8 @@ class _MoneyPageState extends State<MoneyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Money')),
+    return AppScaffold(
+      title: 'Money',
       body: FutureBuilder<MoneyReport>(
         future: _future,
         builder: (context, snapshot) {
@@ -109,26 +111,24 @@ class _BigStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+    return GlassCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: theme.textTheme.headlineMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: theme.textTheme.headlineMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }
@@ -141,11 +141,9 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(children: children),
-      ),
+    return GlassCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(children: children),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/di.dart';
 import '../../core/format.dart';
 import '../bloc/game_history/game_history_bloc.dart';
+import '../widgets/app_scaffold.dart';
 
 class GameHistoryPage extends StatelessWidget {
   const GameHistoryPage({super.key});
@@ -25,8 +26,8 @@ class _GameHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Game history')),
+    return AppScaffold(
+      title: 'Game history',
       body: BlocConsumer<GameHistoryBloc, GameHistoryState>(
         listenWhen: (previous, current) =>
             current.lastUndoResult != null &&

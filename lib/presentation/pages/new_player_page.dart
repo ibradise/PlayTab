@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/app_scaffold.dart';
+import '../widgets/glass_card.dart';
 import '../../domain/usecases/create_tab.dart';
 
 /// Creates a tab and pops with the created [Tab] (or null on cancel).
@@ -32,25 +34,29 @@ class _NewPlayerPageState extends State<NewPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('New player')),
+    return AppScaffold(
+      title: 'New player',
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: TextField(
-          controller: _controller,
-          autofocus: true,
-          textInputAction: TextInputAction.done,
-          onSubmitted: (_) => _create(),
-          decoration: const InputDecoration(
-            labelText: 'Label (optional)',
-            hintText: 'e.g. Abebe, red shirt',
-            border: OutlineInputBorder(),
+        child: GlassCard(
+          padding: const EdgeInsets.all(16),
+          opacity: 0.9,
+          child: TextField(
+            controller: _controller,
+            autofocus: true,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _create(),
+            decoration: const InputDecoration(
+              labelText: 'Label (optional)',
+              hintText: 'e.g. Abebe, red shirt',
+              border: OutlineInputBorder(),
+            ),
           ),
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
+        child: FilledButton(
           onPressed: _saving ? null : _create,
           child: const Text('Create'),
         ),

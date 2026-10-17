@@ -8,6 +8,7 @@ import '../../domain/entities/slot.dart';
 import '../../domain/entities/tab.dart';
 import '../../domain/repositories/tab_repository.dart';
 import '../bloc/stations/stations_bloc.dart';
+import '../widgets/app_scaffold.dart';
 import 'game_history_page.dart';
 import 'money_page.dart';
 import 'new_player_page.dart';
@@ -126,41 +127,39 @@ class _StationsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PS Zone'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.payments_outlined),
-            tooltip: 'Money',
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const MoneyPage()),
-            ),
+    return AppScaffold(
+      title: 'PS Zone',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.payments_outlined),
+          tooltip: 'Money',
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const MoneyPage()),
           ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Settings',
-            onPressed: () async {
-              final bloc = context.read<StationsBloc>();
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SettingsPage()),
-              );
-              bloc.add(const StationsLoadRequested());
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            tooltip: 'Game history',
-            onPressed: () async {
-              final bloc = context.read<StationsBloc>();
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const GameHistoryPage()),
-              );
-              bloc.add(const StationsLoadRequested());
-            },
-          ),
-        ],
-      ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.settings_outlined),
+          tooltip: 'Settings',
+          onPressed: () async {
+            final bloc = context.read<StationsBloc>();
+            await Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SettingsPage()),
+            );
+            bloc.add(const StationsLoadRequested());
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.history),
+          tooltip: 'Game history',
+          onPressed: () async {
+            final bloc = context.read<StationsBloc>();
+            await Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const GameHistoryPage()),
+            );
+            bloc.add(const StationsLoadRequested());
+          },
+        ),
+      ],
       body: BlocListener<StationsBloc, StationsState>(
         listenWhen: (previous, current) =>
             current.error != null && current.error != previous.error,

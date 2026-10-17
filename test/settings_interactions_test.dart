@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:playtab/core/di.dart';
+import 'package:playtab/core/theme_controller.dart';
 import 'package:playtab/domain/repositories/game_repository.dart';
 import 'package:playtab/domain/repositories/payment_repository.dart';
 import 'package:playtab/domain/repositories/settings_repository.dart';
@@ -35,6 +36,7 @@ void _registerDeps() {
     ..registerSingleton<GameRepository>(games)
     ..registerSingleton<PaymentRepository>(payments)
     ..registerSingleton<SettingsRepository>(settings)
+    ..registerSingleton<ThemeController>(ThemeController())
     ..registerLazySingleton<GetStationsWithTabs>(
         () => GetStationsWithTabs(sl(), sl()))
     ..registerLazySingleton<AssignTabToSlot>(() => AssignTabToSlot(sl()))

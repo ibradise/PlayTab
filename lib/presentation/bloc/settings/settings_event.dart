@@ -48,6 +48,16 @@ class StationRemoveRequested extends SettingsEvent {
   List<Object?> get props => [stationId];
 }
 
+/// Persist + apply the app-wide theme choice.
+class ThemeToggleRequested extends SettingsEvent {
+  const ThemeToggleRequested(this.dark);
+
+  final bool dark;
+
+  @override
+  List<Object?> get props => [dark];
+}
+
 class SettingsMessageConsumed extends SettingsEvent {
   const SettingsMessageConsumed();
 }

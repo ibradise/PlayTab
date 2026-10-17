@@ -5,6 +5,7 @@ class SettingsState extends Equatable {
     this.loading = false,
     this.error,
     this.pricePerGame,
+    this.darkMode = false,
     this.stations = const [],
     this.message,
   });
@@ -12,10 +13,11 @@ class SettingsState extends Equatable {
   final bool loading;
   final String? error;
   final int? pricePerGame;
+  final bool darkMode;
   final List<Station> stations;
   final String? message;
 
   @override
   List<Object?> get props =>
-      [loading, error, pricePerGame, stations, message];
+      [loading, error, pricePerGame, darkMode, stations, message];
 }
