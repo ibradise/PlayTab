@@ -14,6 +14,12 @@ class AppDatabase {
 
   bool get _inMemory => _name == inMemoryDatabasePath;
 
+  /// Absolute file path of the database (null for in-memory databases).
+  Future<String?> filePath() async {
+    if (_inMemory) return null;
+    return p.join(await _factory.getDatabasesPath(), _name);
+  }
+
   Future<Database> get database async {
     if (_db != null) return _db!;
     final location = _inMemory

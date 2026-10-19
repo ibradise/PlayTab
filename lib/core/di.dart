@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../data/backup/backup_service.dart';
 import '../data/database/app_database.dart';
 import '../data/repositories/sqflite_game_repository.dart';
 import '../data/repositories/sqflite_payment_repository.dart';
@@ -40,6 +41,7 @@ final GetIt sl = GetIt.instance;
 Future<void> setupDependencies({Database? database}) async {
   final db = database ?? await AppDatabase.instance.database;
   sl.registerSingleton<Database>(db);
+  final dbPath = db.path;
 
   sl.registerLazySingleton<TabRepository>(() => SqfliteTabRepository(sl()));
   sl.registerLazySingleton<StationRepository>(
@@ -49,6 +51,8 @@ Future<void> setupDependencies({Database? database}) async {
       () => SqflitePaymentRepository(sl()));
   sl.registerLazySingleton<SettingsRepository>(
       () => SqfliteSettingsRepository(sl()));
+  sl.registerLazySingleton<BackupService>(
+      () => BackupService(sl(), dbPath));
 
   sl.registerLazySingleton<GetTabOwed>(() => GetTabOwed(sl(), sl()));
   sl.registerLazySingleton<GetMoneyReport>(() => GetMoneyReport(sl(), sl()));

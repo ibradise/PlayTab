@@ -1,8 +1,15 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../core/di.dart';
+import '../../data/backup/backup_service.dart';
 import '../../domain/entities/station.dart';
+import '../../domain/exceptions.dart';
 import '../bloc/settings/settings_bloc.dart';
 import '../widgets/app_scaffold.dart';
 import '../widgets/glass_card.dart';
@@ -167,6 +174,30 @@ class _SettingsPageState extends State<SettingsPage> {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 24),
+                      Text('Data', style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      GlassCard(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.backup_outlined),
+                              title: const Text('Backup data'),
+                              subtitle:
+                                  const Text('Save a copy of everything'),
+                              onTap: _backupData,
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.restore),
+                              title: const Text('Restore from backup'),
+                              subtitle:
+                                  const Text('Replaces everything in the app'),
+                              onTap: _restoreData,
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
           );
@@ -231,6 +262,99 @@ class _SettingsPageState extends State<SettingsPage> {
     );
     if (confirmed != true) return;
     bloc.add(StationRemoveRequested(station.id));
+  }
+
+  void _snack(String message) {
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(content: Text(message), duration: const Duration(seconds: 4)),
+      );
+  }
+
+  Future<void> _backupData() async {
+    try {
+      final file = await sl<BackupService>().backup();
+      if (!mounted) return;
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(file.path)], title: 'PS Zone backup'),
+      );
+      if (mounted) _snack('Backup ready — pick where to save or send it');
+    } catch (e) {
+      if (mounted) _snack('Backup failed: $e');
+    }
+  }
+
+  Future<void> _restoreData() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Restore from backup?'),
+        content: const Text(
+          'Everything currently in the app will be REPLACED by the backup '
+          'you pick. Newer players, games and payments not in that backup '
+          'will be lost.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final picked = await FilePicker.pickFiles();
+    final path = picked.isEmpty ? null : picked.single.path;
+    if (path == null) return;
+
+    try {
+      await sl<BackupService>().restore(File(path));
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Restore complete'),
+          content: const Text(
+            'Open the app again to see your restored data.',
+          ),
+          actions: [
+            FilledButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                SystemNavigator.pop();
+              },
+              child: const Text('Close app'),
+            ),
+          ],
+        ),
+      );
+    } on ValidationException catch (e) {
+      if (mounted) _snack(e.message);
+    } catch (e) {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Restore failed'),
+          content: Text(
+            'Something went wrong. Close and reopen the app, then try again.',
+          ),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
 
